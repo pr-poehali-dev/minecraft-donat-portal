@@ -15,6 +15,7 @@ interface Privilege {
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState<'home' | 'donate' | 'rules'>('home');
+  const [selectedPrivilege, setSelectedPrivilege] = useState<number>(2);
 
   const privileges: Privilege[] = [
     {
@@ -151,7 +152,7 @@ const Index = () => {
         )}
 
         {activeSection === 'donate' && (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-8 animate-fade-in max-w-6xl mx-auto">
             <div className="text-center space-y-4">
               <h2 className="text-4xl md:text-5xl font-bold text-white pixel-text">
                 ДОНАТ-ПРИВИЛЕГИИ
@@ -161,54 +162,84 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-4 mb-8">
               {privileges.map((priv) => (
-                <Card
+                <button
                   key={priv.id}
-                  className={`pixel-corners bg-black/40 border-2 ${
-                    priv.popular
-                      ? 'border-yellow-500 shadow-lg shadow-yellow-500/50 scale-105'
-                      : 'border-purple-500/50'
-                  } hover-scale transition-all`}
+                  onClick={() => setSelectedPrivilege(priv.id)}
+                  className={`pixel-corners p-6 transition-all relative ${
+                    selectedPrivilege === priv.id
+                      ? `bg-gradient-to-r ${priv.color} scale-105 shadow-2xl`
+                      : 'bg-black/40 border-2 border-purple-500/30 hover:border-purple-500/60'
+                  }`}
                 >
-                  {priv.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <Badge className="pixel-corners bg-yellow-500 text-black px-4 py-1">
-                        ⭐ ПОПУЛЯРНО
+                  {priv.popular && selectedPrivilege !== priv.id && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <Badge className="pixel-corners bg-yellow-500 text-black px-3 py-0.5 text-xs">
+                        ⭐ ХИТ
                       </Badge>
                     </div>
                   )}
-                  <CardHeader className="space-y-4">
-                    <div
-                      className={`w-full h-24 pixel-corners bg-gradient-to-r ${priv.color} flex items-center justify-center`}
-                    >
-                      <CardTitle className="text-3xl text-white pixel-text">
-                        {priv.name}
-                      </CardTitle>
+                  <div className="text-center space-y-2">
+                    <h3 className={`text-2xl font-bold pixel-text ${
+                      selectedPrivilege === priv.id ? 'text-white' : 'text-purple-300'
+                    }`}>
+                      {priv.name}
+                    </h3>
+                    <div className={`text-3xl font-bold ${
+                      selectedPrivilege === priv.id ? 'text-white' : 'text-purple-200'
+                    }`}>
+                      {priv.price} ₽
                     </div>
-                    <div className="text-center">
-                      <div className="text-4xl font-bold text-white">{priv.price} ₽</div>
-                      <CardDescription className="text-purple-300">навсегда</CardDescription>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      {priv.features.map((feature, i) => (
-                        <div key={i} className="flex items-start gap-2">
-                          <Icon name="Check" size={20} className="text-green-400 flex-shrink-0 mt-0.5" />
-                          <span className="text-purple-100 text-sm">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <Button
-                      className={`w-full pixel-corners bg-gradient-to-r ${priv.color} hover:opacity-90 text-white font-bold`}
-                    >
-                      Купить {priv.name}
-                    </Button>
-                  </CardContent>
-                </Card>
+                  </div>
+                </button>
               ))}
             </div>
+
+            {selectedPrivilege && (
+              <Card className="pixel-corners bg-black/40 border-2 border-purple-500/50 animate-fade-in">
+                <CardHeader>
+                  <div className={`w-full h-32 pixel-corners bg-gradient-to-r ${
+                    privileges.find(p => p.id === selectedPrivilege)?.color
+                  } flex items-center justify-center mb-4`}>
+                    <CardTitle className="text-5xl text-white pixel-text">
+                      {privileges.find(p => p.id === selectedPrivilege)?.name}
+                    </CardTitle>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-5xl font-bold text-white mb-2">
+                      {privileges.find(p => p.id === selectedPrivilege)?.price} ₽
+                    </div>
+                    <CardDescription className="text-purple-300 text-lg">
+                      Навсегда твой
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-3">
+                    <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                      <Icon name="Sparkles" size={24} className="text-yellow-400" />
+                      Что получишь:
+                    </h4>
+                    {privileges.find(p => p.id === selectedPrivilege)?.features.map((feature, i) => (
+                      <div key={i} className="flex items-start gap-3 bg-purple-900/30 p-3 pixel-corners">
+                        <Icon name="Check" size={24} className="text-green-400 flex-shrink-0 mt-0.5" />
+                        <span className="text-purple-100 text-base">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Button
+                    size="lg"
+                    className={`w-full pixel-corners bg-gradient-to-r ${
+                      privileges.find(p => p.id === selectedPrivilege)?.color
+                    } hover:opacity-90 text-white font-bold text-xl py-8`}
+                  >
+                    <Icon name="ShoppingCart" size={24} />
+                    Купить {privileges.find(p => p.id === selectedPrivilege)?.name}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
 
