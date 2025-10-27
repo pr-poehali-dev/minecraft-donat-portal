@@ -15,6 +15,42 @@ interface Privilege {
 const Index = () => {
   const [nickname, setNickname] = useState('');
   const [selectedPrivilege, setSelectedPrivilege] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handlePayment = async () => {
+    if (!nickname || selectedPrivilege === null) return;
+
+    const privilege = privileges.find(p => p.id === selectedPrivilege);
+    if (!privilege) return;
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('https://functions.poehali.dev/49bba333-84b0-446d-8280-2c49ac5d7e09', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nickname,
+          privilege_id: selectedPrivilege,
+          amount: privilege.price
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.payment_url) {
+        window.location.href = data.payment_url;
+      } else {
+        alert('Ошибка создания платежа: ' + (data.error || 'Неизвестная ошибка'));
+      }
+    } catch (error) {
+      alert('Ошибка соединения с сервером');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const privileges: Privilege[] = [
     {
@@ -128,11 +164,21 @@ const Index = () => {
 
                   <div className="pt-4">
                     <Button
-                      disabled={!nickname || selectedPrivilege === null}
+                      onClick={handlePayment}
+                      disabled={!nickname || selectedPrivilege === null || isLoading}
                       className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Icon name="ShoppingCart" size={20} className="mr-2" />
-                      Перейти к оплате
+                      {isLoading ? (
+                        <>
+                          <Icon name="Loader2" size={20} className="mr-2 animate-spin" />
+                          Создание платежа...
+                        </>
+                      ) : (
+                        <>
+                          <Icon name="ShoppingCart" size={20} className="mr-2" />
+                          Перейти к оплате
+                        </>
+                      )}
                     </Button>
                   </div>
 
