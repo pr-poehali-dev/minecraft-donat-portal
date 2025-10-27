@@ -21,7 +21,7 @@ const Index = () => {
     {
       id: 1,
       name: 'VIP',
-      price: 199,
+      price: 30,
       color: 'from-green-500 to-green-700',
       features: [
         'Префикс [VIP] перед ником',
@@ -197,48 +197,17 @@ const Index = () => {
             </div>
 
             {selectedPrivilege && (
-              <Card className="pixel-corners bg-black/40 border-2 border-purple-500/50 animate-fade-in">
-                <CardHeader>
-                  <div className={`w-full h-32 pixel-corners bg-gradient-to-r ${
+              <div className="text-center animate-fade-in">
+                <Button
+                  size="lg"
+                  className={`pixel-corners bg-gradient-to-r ${
                     privileges.find(p => p.id === selectedPrivilege)?.color
-                  } flex items-center justify-center mb-4`}>
-                    <CardTitle className="text-5xl text-white pixel-text">
-                      {privileges.find(p => p.id === selectedPrivilege)?.name}
-                    </CardTitle>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-5xl font-bold text-white mb-2">
-                      {privileges.find(p => p.id === selectedPrivilege)?.price} ₽
-                    </div>
-                    <CardDescription className="text-purple-300 text-lg">
-                      Навсегда твой
-                    </CardDescription>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-3">
-                    <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                      <Icon name="Sparkles" size={24} className="text-yellow-400" />
-                      Что получишь:
-                    </h4>
-                    {privileges.find(p => p.id === selectedPrivilege)?.features.map((feature, i) => (
-                      <div key={i} className="flex items-start gap-3 bg-purple-900/30 p-3 pixel-corners">
-                        <Icon name="Check" size={24} className="text-green-400 flex-shrink-0 mt-0.5" />
-                        <span className="text-purple-100 text-base">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    size="lg"
-                    className={`w-full pixel-corners bg-gradient-to-r ${
-                      privileges.find(p => p.id === selectedPrivilege)?.color
-                    } hover:opacity-90 text-white font-bold text-xl py-8`}
-                  >
-                    <Icon name="ShoppingCart" size={24} />
-                    Купить {privileges.find(p => p.id === selectedPrivilege)?.name}
-                  </Button>
-                </CardContent>
-              </Card>
+                  } hover:opacity-90 text-white font-bold text-2xl py-10 px-16`}
+                >
+                  <Icon name="ShoppingCart" size={28} />
+                  Купить {privileges.find(p => p.id === selectedPrivilege)?.name} за {privileges.find(p => p.id === selectedPrivilege)?.price} ₽
+                </Button>
+              </div>
             )}
           </div>
         )}
